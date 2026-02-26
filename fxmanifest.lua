@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Wari'
 description 'Made by: dyyykmetrpadesat'
-version '1.0.0' -- Dev Release / Retrovax
+version '1.0.0' -- First release
 
 data_file 'DLC_ITYP_REQUEST' 'stream/alca_anim_eat.ytyp'
 
