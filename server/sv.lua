@@ -2,6 +2,35 @@ local ESX = exports['es_extended']:getSharedObject()
 local ValidItems = {}
 local ActiveSessions = {}
 local CancelCooldowns = {} 
+----------------------------------------
+local scriptName = GetCurrentResourceName()
+local currentVersion = GetResourceMetadata(scriptName, 'version', 0)
+local githubRepo = "WariGG/Wari_FoodSystem"
+
+CreateThread(function()
+    local updateUrl = "https:raw.githubusercontent.com/" .. githubRepo .. "/main/version"
+
+    PerformHttpRequest(updateUrl, function(errorCode, resultData, headers)
+        if errorCode ~= 200 then
+            print ("[Wari - FoodSystem] Eror fetching data from GitHub. (HTTP "..errorCode.. "")")
+            return
+        end 
+
+        if resultData then
+            local latestVersion = resultData:gsub("%s+", "")
+
+            if latestVersion ~= currentVersion then
+                print("^1[Wari - FoodSystem]^7 ^1Update available on github!")
+                print("^1[Wari - FoodSystem]^7 Current version:" .. currentVersion)
+                print("^1[Wari - FoodSystem]^7 New version:" .. latestVersion)
+                print("^1[Wari - FoodSystem]^7 ^3Download it here: https://github.com/" .. githubRepo)
+            else
+                print("^1[Wari - FoodSystem]^7 ^2Script is up-to-date!")
+            end
+        end
+    end, "GET")    
+end)
+----------------------------------------
 
 CreateThread(function()
     for jobName, categories in pairs(Config.JobItems) do
