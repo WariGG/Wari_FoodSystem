@@ -1,4 +1,4 @@
-¨¨# [FiveM] **Food System**
+# [FiveM] **Food System**
 Looking for a **plug-and-play solution** for your **restaurant jobs**? This script provides solution for all usable items on your FiveM server.
 #
 - *Config-driven:* **Add new food/drinks in seconds.**
