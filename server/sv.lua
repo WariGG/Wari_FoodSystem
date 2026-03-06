@@ -2,35 +2,39 @@ local ESX = exports['es_extended']:getSharedObject()
 local ValidItems = {}
 local ActiveSessions = {}
 local CancelCooldowns = {} 
-----------------------------------------
-local scriptName = GetCurrentResourceName()
-local currentVersion = GetResourceMetadata(scriptName, 'version', 0)
-local githubRepo = "WariGG/Wari_FoodSystem"
-
+---------------------------- GitHub Version Check ----------------------------
 CreateThread(function()
-    local updateUrl = "https:raw.githubusercontent.com/" .. githubRepo .. "/main/version"
+    local resourceName = GetCurrentResourceName()
+    local currentVersion = GetResourceMetadata(resourceName, "version", 0)
+    
+    if currentVersion == nil then
+        print("^1[Wari_FoodSystem] You removed version from fxmanifest, redownload script.^7")
+        return
+    end
 
-    PerformHttpRequest(updateUrl, function(errorCode, resultData, headers)
-        if errorCode ~= 200 then
-            print ("[Wari - FoodSystem] Eror fetching data from GitHub. (HTTP "..errorCode.. "")")
-            return
-        end 
-
-        if resultData then
-            local latestVersion = resultData:gsub("%s+", "")
-
-            if latestVersion ~= currentVersion then
-                print("^1[Wari - FoodSystem]^7 ^1Update available on github!")
-                print("^1[Wari - FoodSystem]^7 Current version:" .. currentVersion)
-                print("^1[Wari - FoodSystem]^7 New version:" .. latestVersion)
-                print("^1[Wari - FoodSystem]^7 ^3Download it here: https://github.com/" .. githubRepo)
-            else
-                print("^1[Wari - FoodSystem]^7 ^2Script is up-to-date!")
+    PerformHttpRequest("https://raw.githubusercontent.com/WariGG/Wari_FoodSystem/main/fxmanifest.lua", function(errorCode, resultData, resultHeaders)
+        if errorCode == 200 then
+            local latestVersion = string.match(resultData, "version%s+['\"](.-)['\"]")
+            
+            if latestVersion == nil then
+                print("^1[Wari_FoodSystem] Failed to fetch latest version from GitHub.^7")
+                return
             end
+
+            if currentVersion == latestVersion then
+                print("^2[Wari_FoodSystem] is UP TO DATE! (Version: " .. currentVersion .. ")^7")
+            else
+                print("^1[Wari_FoodSystem] is OUTDATED, download new version!^7")
+                print("^1Current Version: " .. currentVersion .. "^7")
+                print("^2Latest Version: " .. latestVersion .. "^7")
+                print("^3Download the latest update from: https://github.com/WariGG/Wari_FoodSystem^7")
+            end
+        else
+            print("^1[Wari_FoodSystem] GitHub API request failed. Error code: " .. tostring(errorCode) .. "^7")
         end
-    end, "GET")    
+    end, "GET", "", "")
 end)
-----------------------------------------
+------------------------------------------------------------------------------
 
 CreateThread(function()
     for jobName, categories in pairs(Config.JobItems) do
